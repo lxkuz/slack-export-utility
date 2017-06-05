@@ -18,3 +18,9 @@
 
 # config files
 /config/database.yml
+
+# utility for sharing localhost for webhooks
+ngrok
+
+# dotenv
+.env
