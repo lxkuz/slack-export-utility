@@ -1,0 +1,13 @@
+h1= "#{@team.name}.slack.com"
+
+h3 Team users
+ul
+  - @users.each do |user|
+    li= user.name
+
+h3 Team channels
+ul
+  - @channels.each do |channel|
+    li
+      .name= channel.name
+      .count= "Messages count: #{channel.messages.count}"

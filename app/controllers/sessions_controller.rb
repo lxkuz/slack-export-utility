@@ -1,14 +1,14 @@
 class SessionsController < ApplicationController
   def create
     auth = request.env['omniauth.auth']
-    session[:token] = auth['credentials']['token']
-    session[:team] = auth['info']['team']
-    session[:username] = auth['info']['name'] || auth['info']['nickname']
-    redirect_to controller: :slack, action: :info
+    team = Team.find_or_create_from_slack auth
+    team.export!
+    session[:team] = team.slack_id
+    redirect_to team_url(team.id)
   end
 
   def destroy
-    session[:user_id] = nil
-    redirect_to root_url, notice: 'Signed out!'
+    session[:team] = nil
+    redirect_to root_url
   end
 end
