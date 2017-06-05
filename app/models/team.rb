@@ -1,8 +1,9 @@
 class Team < ApplicationRecord
   validates :token, :name, presence: true
 
-  has_many :channels
-  has_many :users
+  has_many :channels, dependent: :destroy
+  has_many :users, dependent: :destroy
+  has_many :messages, dependent: :destroy
 
   serialize :token, EncryptedCoder.new
 

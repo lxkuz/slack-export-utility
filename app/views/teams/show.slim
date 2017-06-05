@@ -11,3 +11,7 @@ ul
     li
       .name= channel.name
       .count= "Messages count: #{channel.messages.count}"
+
+.btn-toolbar
+  = link_to 'Export', export_team_url(@team), class: 'btn btn-success'
+  = link_to 'Unlink', team_url(@team), method: :delete, class: 'btn btn-danger'

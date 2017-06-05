@@ -31,14 +31,12 @@ class SlackExporter
 
   def export_channel_messages!(channel)
     messages_data = @api_client.channel_messages channel.slack_id
+    messages_data.select! { |o| o['user'] }
     messages_data.each do |obj|
       obj['channel_id'] = channel.id
       obj['user_id'] = User.where(team: @team).find_by_slack_id(obj['user']).id
     end
-    fields = {
-      user_id: :user_id,
-      channel_id: :channel_id
-    }
+    fields = { user_id: :user_id, channel_id: :channel_id }
     export_collection! Message, messages_data, fields, clean: false
   end
 
@@ -56,8 +54,6 @@ class SlackExporter
   end
 
   def export_record!(klass, record, fields)
-    puts 'RECORD:'
-    puts record
     obj = klass.new team_id: @team.id, slack_id: record['id'], created_at: parse_ts(record)
     fields.each do |from, to|
       obj.send("#{to}=", record[from.to_s])
@@ -67,7 +63,6 @@ class SlackExporter
 
   def parse_ts(record)
     ts = record['ts'] || record['updated'] || record['created']
-    puts 'TS ' + ts.to_s
     DateTime.strptime ts.to_s, '%s'
   end
 end
