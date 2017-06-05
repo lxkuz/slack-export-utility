@@ -1,0 +1,17 @@
+common: &common
+  adapter: postgresql
+  encoding: unicode
+  min_messages: WARNING
+  pool: 5
+
+development:
+  <<: *common
+  database: slack_export_utility_development
+
+production:
+  <<: *common
+  database: slack_export_utility_production
+  
+test:
+  <<: *common
+  database: slack_export_utility_test
