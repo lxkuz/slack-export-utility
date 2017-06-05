@@ -8,5 +8,6 @@ ul
 h3 Team channels
 ul
   - @channels.each do |channel|
-    li= channel['name']
-
+    li
+      .name= channel['name']
+      .count= "messages count: #{@messages[channel['id']].count}"

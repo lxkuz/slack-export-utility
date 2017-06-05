@@ -13,6 +13,10 @@ class SlackAPI
     request 'channels', 'channels.list'
   end
 
+  def channel_messages(id)
+    request 'messages', 'channels.history', channel: id
+  end
+
   private
 
   def request(key, url, data = {})
