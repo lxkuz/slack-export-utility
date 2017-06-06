@@ -5,9 +5,9 @@
 git clone git@github.com:lxkuz/slack-export-utility.git
 cd slack-export-utility
 # using PostgreSQL
-cp config/database.yml.example cp config/database.yml
+cp config/database.yml.example config/database.yml
 # using ruby 2.4.1
-bundle install
+bundle
 rake db:create db:migrate
 rails s
 ```
