@@ -8,16 +8,4 @@ class SlackController < ApplicationController
                               redirect_uri: ENV['REDIRECT_URI']
                             }.to_query).to_s
   end
-
-  def info
-    client = SlackAPI.new session[:token]
-    @username = session[:username]
-    @team = session[:team]
-    @users = client.users_list
-    @channels = client.channels_list
-    @messages = {}
-    @channels.each do |channel|
-      @messages[channel['id']] = client.channel_messages channel['id']
-    end
-  end
 end

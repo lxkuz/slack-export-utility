@@ -1,37 +1,27 @@
 class TeamsController < ApplicationController
+  include TeamExporter
+
   def show
-    @team = current_team
-    @channels = @team.channels
-    @users = @team.users
+    @channels = current_team.channels
+    @users = current_team.users
   end
 
   def export
-    team = Team.find params[:id]
-    filename = Rails.root.join('tmp', "#{team.name}-#{Time.now.to_i}.xlsx")
-    row = %w(User Channel Date DateTime)
-
-    data = team.messages.map do |message|
-      [
-        message.user.name,
-        message.channel.name,
-        message.created_at.strftime('%d/%m/%Y'),
-        message.created_at.strftime('%d/%m/%Y %H:%M')
-      ]
-    end
-
-    ExcelImporter.new(filename, row, data)
+    filename = Rails.root.join('tmp', "#{current_team.name}-#{Time.now.to_i}.xlsx")
+    row = export_columns
+    data = export_data current_team.messages
+    ExcelImporter.new filename, row, data
     send_file filename
   end
 
   def destroy
-    team = Team.find params[:id]
-    team.destroy
+    current_team.destroy
     redirect_to root_url
   end
 
   private
 
   def current_team
-    Team.find_by_slack_id(session[:team]) if session[:team]
+    @team ||= Team.find params[:id]
   end
 end
