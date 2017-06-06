@@ -1,5 +1,6 @@
 class SlackController < ApplicationController
   def login
+    @teams = Team.all
     @url = URI::HTTPS.build(host: 'slack.com',
                             path: '/oauth/authorize',
                             query: {

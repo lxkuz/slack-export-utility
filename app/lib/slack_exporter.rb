@@ -1,4 +1,6 @@
 class SlackExporter
+  BATCH_SIZE = 30
+
   def initialize(team)
     @team = team
     @api_client = SlackAPI.new team.token
@@ -13,31 +15,44 @@ class SlackExporter
   def export_users!
     data = @api_client.users_list
     fields = { name: 'name' }
-    export_collection! User, data, fields, clean: true
+    User.bulk_insert do |worker|
+      worker.set_size = BATCH_SIZE
+      export_collection! User, worker, data, fields, clean: true
+    end
   end
 
   def export_channels!
     data = @api_client.channels_list
     fields = { name: 'name' }
-    export_collection! Channel, data, fields, clean: true
+    Channel.bulk_insert do |worker|
+      worker.set_size = BATCH_SIZE
+      export_collection! Channel, worker, data, fields, clean: true
+    end
   end
 
   def export_messages!
     clean_collection! Message
-    @team.channels.each do |channel|
-      export_channel_messages! channel
+    users_map = {}
+    Message.bulk_insert do |worker|
+      worker.set_size = BATCH_SIZE
+      @team.users.each do |user|
+        users_map[user.slack_id] = user.id
+      end
+      @team.channels.each do |channel|
+        export_channel_messages! worker, channel, users_map
+      end
     end
   end
 
-  def export_channel_messages!(channel)
+  def export_channel_messages!(worker, channel, users_map)
     messages_data = @api_client.channel_messages channel.slack_id
     messages_data.select! { |o| o['user'] }
     messages_data.each do |obj|
       obj['channel_id'] = channel.id
-      obj['user_id'] = User.where(team: @team).find_by_slack_id(obj['user']).id
+      obj['user_id'] = users_map[obj['user']]
     end
     fields = { user_id: :user_id, channel_id: :channel_id }
-    export_collection! Message, messages_data, fields, clean: false
+    export_collection! Message, worker, messages_data, fields, clean: false
   end
 
   private
@@ -46,19 +61,19 @@ class SlackExporter
     klass.where(team_id: @team.id).delete_all
   end
 
-  def export_collection!(klass, data, fields, options = {})
+  def export_collection!(klass, worker, data, fields, options = {})
     clean_collection! klass if options[:clean]
     data.each do |record|
-      export_record! klass, record, fields
+      export_record! klass, worker, record, fields
     end
   end
 
-  def export_record!(klass, record, fields)
-    obj = klass.new team_id: @team.id, slack_id: record['id'], created_at: parse_ts(record)
+  def export_record!(_klass, worker, record, fields)
+    attrs = { team_id: @team.id, slack_id: record['id'], created_at: parse_ts(record) }
     fields.each do |from, to|
-      obj.send("#{to}=", record[from.to_s])
+      attrs[to] = record[from.to_s]
     end
-    obj.save!
+    worker.add attrs
   end
 
   def parse_ts(record)
