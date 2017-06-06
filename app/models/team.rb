@@ -17,7 +17,7 @@ class Team < ApplicationRecord
   end
 
   def export!
-    # TODO: use background job
+    # Background job doesn't supported by Heroku free plan
     exporter = SlackExporter.new self
     exporter.export_team!
   end

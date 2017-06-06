@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
-  root to: 'slack#login'
   get '/auth/slack/callback', to: 'sessions#create'
 
-  resources :teams, only: [:show, :destroy] do
+  resources :teams, only: [:index, :show, :destroy], path: '/' do
     member do
       get 'export'
     end

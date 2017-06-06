@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 2.4.1
+env:
+  - API_KEY=testapikey API_SECRET=testttapisecret REDIRECT_URI=http://test.com/auth/slack/callback
+addons:
+  postgresql: "9.4"
+
+script: "cp config/database.yml.example config/database.yml && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rspec spec"

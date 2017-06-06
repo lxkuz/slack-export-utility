@@ -9,6 +9,12 @@ Metrics/LineLength:
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - 'spec/mock_data/slack_api.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/controllers/teams_controller_spec.rb'
 # Offense count: 1
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
