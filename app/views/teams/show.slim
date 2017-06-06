@@ -2,7 +2,7 @@
   = link_to 'Unlink', team_url(@team), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn btn-danger'
   = link_to 'Export', export_team_url(@team), class: 'btn btn-success'
 h1= "#{@team.name}.slack.com"
-p= link_to 'Go back', root_url, class: 'btn btn-default'
+p= link_to 'Go back', teams_url, class: 'btn btn-default'
 .info
   span Full messages count:
   b= @team.messages.count 

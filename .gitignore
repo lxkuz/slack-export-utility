@@ -24,3 +24,6 @@ ngrok
 
 # dotenv
 .env
+
+# Simplecov
+coverage

@@ -1,6 +1,17 @@
 class TeamsController < ApplicationController
   include TeamExporter
 
+  def index
+    @teams = Team.all
+    @url = URI::HTTPS.build(host: 'slack.com',
+                            path: '/oauth/authorize',
+                            query: {
+                              scope: 'users:read,channels:read,channels:history',
+                              client_id: ENV['API_KEY'],
+                              redirect_uri: ENV['REDIRECT_URI']
+                            }.to_query).to_s
+  end
+
   def show
     @channels = current_team.channels
     @users = current_team.users
@@ -16,7 +27,7 @@ class TeamsController < ApplicationController
 
   def destroy
     current_team.destroy
-    redirect_to root_url
+    redirect_to teams_url
   end
 
   private

@@ -19,11 +19,14 @@ gem 'puma', '~> 3.0'
 gem 'rails', '~> 5.0.3'
 gem 'rubocop', require: false
 gem 'sass-rails', '~> 5.0'
+gem 'simplecov', require: false, group: :test
 gem 'slim-rails'
 gem 'turbolinks', '~> 5'
 gem 'uglifier', '>= 1.3.0'
+gem 'webmock'
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'rspec-rails', '~> 3.5'
 end
 
 group :development do
