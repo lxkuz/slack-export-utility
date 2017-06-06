@@ -1,24 +1,29 @@
-# README
+### INSTALLATION
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+```bash
+git clone git@github.com:lxkuz/slack-export-utility.git
+cd slack-export-utility
+# using PostgreSQL
+cp config/database.yml.example cp config/database.yml
+# using ruby 2.4.1
+bundle install
+rake db:create db:migrate
+rails s
+```
 
-* Ruby version
+### TESTS
 
-* System dependencies
+```bash
+  rspec spec
+```
+### TECHNOLOGIES
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Ruby 2.4.1
+* Rails 5
+* PosgreSQL 9.4
+* Rubocop with git precommit hook
+* Axlsx for Excel generation
+* bulk_insert - gem to increase export perfomance
+* Rspec, Webmock, Simplecov, Travis CI - testing infrastucture
+* Heroku deployment
