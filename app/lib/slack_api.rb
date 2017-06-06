@@ -6,15 +6,15 @@ class SlackAPI
   end
 
   def users_list
-    request 'members', 'users.list'
+    request 'members', 'users.list', count: 1000
   end
 
   def channels_list
-    request 'channels', 'channels.list'
+    request 'channels', 'channels.list', count: 1000
   end
 
   def channel_messages(id)
-    request 'messages', 'channels.history', channel: id
+    request 'messages', 'channels.history', channel: id, count: 1000
   end
 
   private
