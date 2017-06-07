@@ -1,5 +1,6 @@
 class TeamsController < ApplicationController
   include TeamExporter
+  BATCH_SIZE = 10_000
 
   def index
     @teams = Team.all
@@ -20,7 +21,7 @@ class TeamsController < ApplicationController
   def export
     filename = Rails.root.join('tmp', "#{current_team.name}-#{Time.now.to_i}.csv")
     exporter = ExcelImporter.new filename, export_columns
-    current_team.messages.preload(:user).preload(:channel).find_in_batches do |batch|
+    current_team.messages.preload(:user).preload(:channel).find_in_batches(batch_size: BATCH_SIZE) do |batch|
       data = export_data batch
       exporter.append data
     end
