@@ -19,14 +19,21 @@ class SlackAPI
 
   private
 
-  def request(key, url, data = {})
-    body = authorized_request url, data
-    return body[key] if body['ok']
-    raise SlackApiError, body.to_s
+  def _ts(record)
+    record['ts'] || record['updated'] || record['created']
   end
 
-  def authorized_request(url, data)
-    base_request url, data.merge(token: @token)
+  def request(key, url, options = {}, data = [])
+    body = authorized_request url, options
+    raise SlackApiError, body.to_s unless body['ok']
+    data += body[key]
+    return data unless body['has_more']
+    options['latest'] = _ts(data.last)
+    request key, url, options, data
+  end
+
+  def authorized_request(url, options)
+    base_request url, options.merge(token: @token)
   end
 
   def base_request(url, data)
