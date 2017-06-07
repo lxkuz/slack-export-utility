@@ -46,7 +46,7 @@ RSpec.describe TeamsController, type: :controller do
 
       get :export, params: { id: team.id }
       expect(response).to be_success
-      expect(response.headers['Content-Type']).to eq('application/octet-stream')
+      expect(response.headers['Content-Type']).to eq('text/csv')
     end
   end
 
