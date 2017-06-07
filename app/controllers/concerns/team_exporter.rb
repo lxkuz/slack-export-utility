@@ -14,7 +14,7 @@ module TeamExporter
     end
 
     def export_data(messages)
-      messages.preload(:user).preload(:channel).map do |m|
+      messages.map do |m|
         [
           m.user.try(:name), m.channel.try(:name),
           _date(m.created_at), _datetime(m.created_at),

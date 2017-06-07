@@ -18,10 +18,12 @@ class TeamsController < ApplicationController
   end
 
   def export
-    filename = Rails.root.join('tmp', "#{current_team.name}-#{Time.now.to_i}.xlsx")
-    row = export_columns
-    data = export_data current_team.messages
-    ExcelImporter.new filename, row, data
+    filename = Rails.root.join('tmp', "#{current_team.name}-#{Time.now.to_i}.csv")
+    exporter = ExcelImporter.new filename, export_columns
+    current_team.messages.preload(:user).preload(:channel).find_in_batches do |batch|
+      data = export_data batch
+      exporter.append data
+    end
     send_file filename
   end
 
